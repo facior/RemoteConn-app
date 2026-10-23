@@ -1,0 +1,56 @@
+name: Release
+
+# Push a tag like v0.1.0 to build the Windows installers and publish them as a
+# GitHub release. The version shown in the app comes from
+# desktop/src-tauri/tauri.conf.json; keep it equal to the tag.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - run: npm ci
+        working-directory: desktop
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: desktop
+          tagName: ${{ github.ref_name }}
+          releaseName: RemoteConn ${{ github.ref_name }}
+          releaseBody: |
+            Zdalny pulpit w stylu AnyDesk / AnyViewer dla Windows 10/11.
+
+            ## Instalacja
+            Pobierz **`RemoteConn_*_x64-setup.exe`** (zalecane) albo **`RemoteConn_*_x64_en-US.msi`** z listy plików poniżej i uruchom.
+
+            > Program nie jest jeszcze podpisany certyfikatem, więc Windows SmartScreen może pokazać ostrzeżenie
+            > „System Windows ochronił ten komputer”. Kliknij **Więcej informacji → Uruchom mimo to**.
+
+            ## Co jest w tej wersji
+            - łączenie po 9-cyfrowym ID (własny serwer ID) albo adresie IP, bezpośrednio lub przez relay;
+            - szyfrowanie end-to-end (Noise + QUIC), hasła przez SPAKE2;
+            - czat, wspólny schowek, przesyłanie plików ze wznawianiem, zdalny kursor, wybór jakości i monitora;
+            - **konta**: „Moje komputery” i łączenie bez hasła między własnymi urządzeniami;
+            - **usługa Windows**: dostęp bez nadzoru, także na ekranie logowania i przy UAC, Ctrl+Alt+Del;
+            - linki `remoteconn://` (przycisk „Połącz” w panelu serwera).
+
+            ## Serwer
+            Do łączenia po ID przez internet potrzebny jest serwer: [RemoteConn-server](https://github.com/facior/RemoteConn-server).
+            W aplikacji: Ustawienia → Sieć → adres serwera i klucz dostępu, potem „Testuj”.
+          releaseDraft: false
+          prerelease: true

@@ -26,6 +26,15 @@ Bez niego aplikacja łączy się po adresie IP, np. w sieci lokalnej.
 | Windows 10/11 | działa (udostępnianie i łączenie, usługa) |
 | macOS | w planach (ScreenCaptureKit, VideoToolbox) |
 
+## Pobieranie
+
+Gotowe instalatory dla Windows są w **[Releases](https://github.com/facior/RemoteConn-app/releases)**
+(`RemoteConn_*_x64-setup.exe` albo `.msi`). Program nie jest jeszcze podpisany certyfikatem, więc SmartScreen może
+ostrzec przy pierwszym uruchomieniu: „Więcej informacji → Uruchom mimo to”.
+
+Nowe wydanie: zmień wersję w `desktop/src-tauri/tauri.conf.json` (i `desktop/package.json`) i wypchnij tag, np.
+`git tag v0.2.0 && git push origin v0.2.0`. Workflow `release.yml` zbuduje instalatory i opublikuje je.
+
 ## Jak używać
 
 1. **Serwer:** Ustawienia → Sieć → adres serwera ID i klucz dostępu (od administratora), „Testuj”.
