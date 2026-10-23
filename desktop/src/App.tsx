@@ -112,6 +112,13 @@ function HostCard() {
       .catch(console.error);
   }, []);
 
+  // The status carries the last rendezvous state: the service's host may
+  // have gone online before this window was there to get the event.
+  const showStatus = (s: HostStatus | null) => {
+    setStatus(s);
+    if (s?.rendezvous) setRendezvous(s.rendezvous);
+  };
+
   // After an app update the service still runs the old program (it is a copy
   // in Program Files); replacing it needs the administrator's consent.
   const updateService = async () => {
@@ -119,7 +126,7 @@ function HostCard() {
     try {
       await api.serviceInstall();
       setServiceUpdate("");
-      setStatus(await api.hostStatus());
+      showStatus(await api.hostStatus());
     } catch (e) {
       setServiceUpdate(String(e));
     }
@@ -129,7 +136,7 @@ function HostCard() {
   useEffect(() => {
     api
       .hostStatus()
-      .then((s) => s && setStatus(s))
+      .then((s) => s && showStatus(s))
       .catch(console.error);
   }, []);
 
@@ -137,16 +144,16 @@ function HostCard() {
     const unlisteners = [
       listen<RendezvousEvent>("host://rendezvous", (e) => setRendezvous(e.payload)),
       listen<HostStatus>("host://restarted", (e) => {
-        setStatus(e.payload);
         setActive([]);
         setRequests([]);
         setRendezvous(null);
+        showStatus(e.payload);
       }),
       listen<string>("host://password", (e) => setStatus((s) => (s ? { ...s, password: e.payload } : s))),
       listen("service://state", () => {
         api
           .hostStatus()
-          .then((s) => setStatus(s))
+          .then((s) => showStatus(s))
           .catch(() => setStatus(null));
       }),
       listen<{ ok: boolean; error: string }>("service://sync", (e) => {
@@ -192,7 +199,7 @@ function HostCard() {
     setError("");
     setRendezvous(null);
     try {
-      setStatus(await api.hostStart());
+      showStatus(await api.hostStart());
     } catch (e) {
       setError(String(e));
     }

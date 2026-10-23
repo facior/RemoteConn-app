@@ -18,6 +18,8 @@ export interface HostStatus {
   service: boolean;
   /** Version of the program that shares (service may lag behind the app). */
   version: string;
+  /** Last rendezvous state; null while still connecting. */
+  rendezvous: RendezvousEvent | null;
 }
 
 export interface RendezvousEvent {

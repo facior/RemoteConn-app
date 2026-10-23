@@ -84,6 +84,10 @@ pub struct HostStatus {
     /// the app after an update).
     #[serde(default)]
     pub version: String,
+    /// Last rendezvous state (`host://rendezvous` payload); `None` while
+    /// still connecting.
+    #[serde(default)]
+    pub rendezvous: Option<serde_json::Value>,
 }
 
 #[derive(Serialize, Clone)]
@@ -267,7 +271,13 @@ impl<E: HostEnv> HostHooks for UiHooks<E> {
                 },
             },
         };
-        self.emit("host://rendezvous", event);
+        match serde_json::to_value(&event) {
+            Ok(value) => {
+                *state.rendezvous_status.lock().unwrap() = Some(value.clone());
+                self.0.emit_json("host://rendezvous", value);
+            }
+            Err(e) => tracing::warn!("host://rendezvous: {e}"),
+        }
     }
 
     fn transfer(&self, peer: &PeerInfo, event: &TransferEvent) {
@@ -337,6 +347,7 @@ pub fn status_of(state: &AppState, running: &RunningHost, uses_rendezvous: bool)
         permanent_password_set: state.has_permanent_password(),
         service: false,
         version: env!("CARGO_PKG_VERSION").into(),
+        rendezvous: state.rendezvous_status.lock().unwrap().clone(),
     }
 }
 
@@ -346,6 +357,7 @@ pub async fn start_host<E: HostEnv>(env: &E) -> CmdResult<HostStatus> {
     let mut host = state.host.lock().await;
     let rendezvous = configured_server(state).await?;
     if host.is_none() {
+        *state.rendezvous_status.lock().unwrap() = None;
         let settings = state.settings();
         let dir_env = env.clone();
         // Without a logged-in user (service at the login screen) incoming

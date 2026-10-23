@@ -3752,7 +3752,7 @@ checksum = "20675572f6f24e9e76ef639bc5552774ed45f1c30e2951e1e99c59888861c539"
 
 [[package]]
 name = "rc-capture"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "thiserror 2.0.21",
  "windows",
@@ -3760,7 +3760,7 @@ dependencies = [
 
 [[package]]
 name = "rc-clipboard"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "arboard",
  "blake3",
@@ -3771,7 +3771,7 @@ dependencies = [
 
 [[package]]
 name = "rc-codec"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "openh264",
  "openh264-sys2",
@@ -3780,7 +3780,7 @@ dependencies = [
 
 [[package]]
 name = "rc-crypto"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "argon2",
  "blake3",
@@ -3795,7 +3795,7 @@ dependencies = [
 
 [[package]]
 name = "rc-input"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "rc-capture",
  "rc-proto",
@@ -3805,7 +3805,7 @@ dependencies = [
 
 [[package]]
 name = "rc-proto"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "prost",
  "prost-build",
@@ -3815,7 +3815,7 @@ dependencies = [
 
 [[package]]
 name = "rc-rendezvous"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "rand 0.8.8",
  "rc-crypto",
@@ -3828,7 +3828,7 @@ dependencies = [
 
 [[package]]
 name = "rc-session"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "blake3",
  "dirs 5.0.1",
@@ -3848,7 +3848,7 @@ dependencies = [
 
 [[package]]
 name = "rc-transport"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "blake3",
  "bytes",
@@ -3955,7 +3955,7 @@ checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
 
 [[package]]
 name = "remoteconn-desktop"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "base64 0.22.1",
  "rc-clipboard",

@@ -43,6 +43,9 @@ pub struct AppState {
     pub pending_link: Mutex<Option<String>>,
     /// Account the host lets in without a password (shared with the host).
     pub account_trust: Arc<RwLock<Option<rc_session::AccountTrust>>>,
+    /// Last `host://rendezvous` event, for windows that connect later (the
+    /// service's host goes online before the app window opens).
+    pub rendezvous_status: Mutex<Option<serde_json::Value>>,
 }
 
 impl AppState {
@@ -70,6 +73,7 @@ impl AppState {
             next_request: AtomicU64::new(1),
             pending_link: Mutex::new(None),
             account_trust: Arc::new(RwLock::new(trust)),
+            rendezvous_status: Mutex::new(None),
         }
     }
 
