@@ -3,6 +3,7 @@ import { Channel, invoke } from "@tauri-apps/api/core";
 export interface DeviceInfo {
   name: string;
   fingerprint: string;
+  version: string;
 }
 
 export interface HostStatus {
@@ -15,6 +16,8 @@ export interface HostStatus {
   permanentPasswordSet: boolean;
   /** Sharing runs in the background service. */
   service: boolean;
+  /** Version of the program that shares (service may lag behind the app). */
+  version: string;
 }
 
 export interface RendezvousEvent {

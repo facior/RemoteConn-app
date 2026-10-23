@@ -743,3 +743,27 @@ select:focus-visible {
   margin: 0 0 8px;
 }
 
+
+.update-banner,
+.notice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  background: var(--surface);
+}
+.update-banner {
+  margin: 0 24px 12px;
+}
+.update-banner > span:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.notice {
+  margin: 8px 0;
+  justify-content: space-between;
+}
+

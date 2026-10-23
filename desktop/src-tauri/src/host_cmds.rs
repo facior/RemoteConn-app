@@ -80,6 +80,10 @@ pub struct HostStatus {
     /// Sharing runs in the background service (always on).
     #[serde(default)]
     pub service: bool,
+    /// Version of the program that shares (the service may be older than
+    /// the app after an update).
+    #[serde(default)]
+    pub version: String,
 }
 
 #[derive(Serialize, Clone)]
@@ -332,6 +336,7 @@ pub fn status_of(state: &AppState, running: &RunningHost, uses_rendezvous: bool)
         device_id: format_id(&state.device_id()),
         permanent_password_set: state.has_permanent_password(),
         service: false,
+        version: env!("CARGO_PKG_VERSION").into(),
     }
 }
 

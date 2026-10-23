@@ -32,8 +32,26 @@ Gotowe instalatory dla Windows są w **[Releases](https://github.com/facior/Remo
 (`RemoteConn_*_x64-setup.exe` albo `.msi`). Program nie jest jeszcze podpisany certyfikatem, więc SmartScreen może
 ostrzec przy pierwszym uruchomieniu: „Więcej informacji → Uruchom mimo to”.
 
-Nowe wydanie: zmień wersję w `desktop/src-tauri/tauri.conf.json` (i `desktop/package.json`) i wypchnij tag, np.
-`git tag v0.2.0 && git push origin v0.2.0`. Workflow `release.yml` zbuduje instalatory i opublikuje je.
+### Aktualizacje
+
+Od wersji 0.2.0 aplikacja sama sprawdza nowe wydania (przy starcie i co 6 godzin). Gdy jest nowsze, pokazuje baner
+„Dostępna nowa wersja — Zainstaluj”; po kliknięciu pobiera, instaluje i uruchamia się ponownie. Paczki aktualizacji
+są podpisane kluczem projektu, a aplikacja przyjmuje tylko takie. Jeśli na komputerze działa usługa (dostęp bez
+nadzoru), aplikacja podpowie też „Zaktualizuj usługę” (zgoda administratora), bo usługa jest osobną kopią programu.
+
+### Nowe wydanie
+
+```powershell
+.\scripts\bump-version.ps1 0.3.0          # wersja w Cargo.toml, tauri.conf.json i package.json
+git commit -am "Version 0.3.0"
+git tag v0.3.0
+git push origin main v0.3.0
+```
+
+Workflow `release.yml` zbuduje instalatory, podpisze aktualizację (sekrety `TAURI_SIGNING_PRIVATE_KEY` i
+`TAURI_SIGNING_PRIVATE_KEY_PASSWORD`) i opublikuje wydanie razem z `latest.json`, z którego korzystają zainstalowane
+aplikacje. Klucz prywatny i hasło mają kopię w `%USERPROFILE%\.tauri\remoteconn-updater.key*`. **Bez nich nie da się
+wydać aktualizacji dla już zainstalowanych aplikacji**, więc przechowuj kopię w bezpiecznym miejscu.
 
 ## Jak używać
 

@@ -28,6 +28,10 @@ jobs:
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Signs the update packages; the app accepts only updates signed with
+          # this key (public key in desktop/src-tauri/tauri.conf.json).
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           projectPath: desktop
           tagName: ${{ github.ref_name }}
@@ -38,6 +42,8 @@ jobs:
             ## Instalacja
             Pobierz **`RemoteConn_*_x64-setup.exe`** (zalecane) albo **`RemoteConn_*_x64_en-US.msi`** z listy plików poniżej i uruchom.
 
+            Zainstalowana aplikacja (od wersji 0.2.0) sama proponuje kolejne aktualizacje.
+
             > Program nie jest jeszcze podpisany certyfikatem, więc Windows SmartScreen może pokazać ostrzeżenie
             > „System Windows ochronił ten komputer”. Kliknij **Więcej informacji → Uruchom mimo to**.
 
@@ -47,10 +53,12 @@ jobs:
             - czat, wspólny schowek, przesyłanie plików ze wznawianiem, zdalny kursor, wybór jakości i monitora;
             - **konta**: „Moje komputery” i łączenie bez hasła między własnymi urządzeniami;
             - **usługa Windows**: dostęp bez nadzoru, także na ekranie logowania i przy UAC, Ctrl+Alt+Del;
-            - linki `remoteconn://` (przycisk „Połącz” w panelu serwera).
+            - linki `remoteconn://` (przycisk „Połącz” w panelu serwera);
+            - **automatyczne aktualizacje**: aplikacja sprawdza nowe wydania i po kliknięciu instaluje podpisaną aktualizację.
 
             ## Serwer
             Do łączenia po ID przez internet potrzebny jest serwer: [RemoteConn-server](https://github.com/facior/RemoteConn-server).
             W aplikacji: Ustawienia → Sieć → adres serwera i klucz dostępu, potem „Testuj”.
           releaseDraft: false
-          prerelease: true
+          # Regular releases: the updater reads releases/latest, which skips prereleases.
+          prerelease: false

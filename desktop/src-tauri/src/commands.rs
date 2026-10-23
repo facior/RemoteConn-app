@@ -33,6 +33,8 @@ pub(crate) fn err(e: impl std::fmt::Display) -> String {
 pub struct DeviceInfo {
     name: String,
     fingerprint: String,
+    /// App version (compared with the service's after an update).
+    version: &'static str,
 }
 
 /// Device ID from a `remoteconn://` link that arrived before the UI listened.
@@ -46,6 +48,7 @@ pub fn device_info(state: State<'_, AppState>) -> DeviceInfo {
     DeviceInfo {
         name: state.device_name(),
         fingerprint: state.identity.fingerprint(),
+        version: env!("CARGO_PKG_VERSION"),
     }
 }
 

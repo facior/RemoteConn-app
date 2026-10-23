@@ -22,6 +22,7 @@ import {
 } from "./api";
 import { useNotify } from "./settings";
 import { SettingsPage } from "./SettingsPage";
+import { UpdateBanner } from "./Updater";
 import { CanvasDecoder } from "./decoder";
 import { IncomingDialog } from "./IncomingDialog";
 import { SessionView, SessionChannels } from "./SessionView";
@@ -66,6 +67,7 @@ export default function App() {
           Ustawienia
         </button>
       </header>
+      <UpdateBanner />
       <main className="cards">
         <HostCard />
         <ConnectCard onConnected={(peer, channels) => setSession({ peer, channels })} />
@@ -100,6 +102,28 @@ function HostCard() {
   const [transfers, setTransfers] = useState<Record<number, Transfer[]>>({});
   const [autoAccepted, setAutoAccepted] = useState("");
   const notify = useNotify();
+  const [appVersion, setAppVersion] = useState("");
+  const [serviceUpdate, setServiceUpdate] = useState("");
+
+  useEffect(() => {
+    api
+      .deviceInfo()
+      .then((d) => setAppVersion(d.version))
+      .catch(console.error);
+  }, []);
+
+  // After an app update the service still runs the old program (it is a copy
+  // in Program Files); replacing it needs the administrator's consent.
+  const updateService = async () => {
+    setServiceUpdate("Czekam na zgodę administratora…");
+    try {
+      await api.serviceInstall();
+      setServiceUpdate("");
+      setStatus(await api.hostStatus());
+    } catch (e) {
+      setServiceUpdate(String(e));
+    }
+  };
 
   // Sharing may already run (started on app launch).
   useEffect(() => {
@@ -253,6 +277,17 @@ function HostCard() {
             />
           ))}
           {lastEnded && active.length === 0 && <p className="muted small">Ostatnia sesja: {lastEnded}</p>}
+          {status.service && appVersion && status.version && status.version !== appVersion && (
+            <div className="notice">
+              <span>
+                Usługa ma starszą wersję ({status.version}) niż aplikacja ({appVersion}).
+                {serviceUpdate && <span className="muted small"> {serviceUpdate}</span>}
+              </span>
+              <button className="secondary" onClick={updateService}>
+                Zaktualizuj usługę
+              </button>
+            </div>
+          )}
           {status.service ? (
             <p className="muted small">
               Udostępnia usługa systemowa: komputer jest dostępny zawsze po włączeniu, także przed zalogowaniem.
