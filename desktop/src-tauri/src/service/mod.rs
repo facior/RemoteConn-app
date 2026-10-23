@@ -81,10 +81,6 @@ pub mod client {
 
     pub fn init(_app: &AppHandle) {}
 
-    pub fn installed() -> bool {
-        false
-    }
-
     pub async fn sync_if_installed(_app: &AppHandle) {}
 
     #[derive(serde::Serialize)]
@@ -124,7 +120,9 @@ pub mod client {
     }
 }
 
+#[cfg(windows)]
 pub const SERVICE_NAME: &str = "RemoteConn";
+#[cfg(windows)]
 pub const SERVICE_DISPLAY_NAME: &str = "RemoteConn — dostęp bez nadzoru";
 
 /// Command-line modes handled before the window starts. Returns the exit
