@@ -40,16 +40,16 @@ pub mod client {
 
     pub struct ServiceClient;
 
-    type Result<T> = std::result::Result<T, String>;
+    type StubResult<T> = std::result::Result<T, String>;
 
     /// Never constructed ([`active`] is always `None`); mirrors the Windows
     /// client so the host commands compile everywhere.
     #[allow(dead_code)]
     impl ServiceClient {
-        pub async fn status(&self) -> Result<crate::host_cmds::HostStatus> {
+        pub async fn status(&self) -> StubResult<crate::host_cmds::HostStatus> {
             Err(UNSUPPORTED.into())
         }
-        pub async fn new_password(&self) -> Result<String> {
+        pub async fn new_password(&self) -> StubResult<String> {
             Err(UNSUPPORTED.into())
         }
         pub async fn respond(
@@ -58,19 +58,19 @@ pub mod client {
             _accept: bool,
             _permissions: crate::host_cmds::PermissionsDto,
             _trust: bool,
-        ) -> Result<()> {
+        ) -> StubResult<()> {
             Err(UNSUPPORTED.into())
         }
-        pub async fn chat(&self, _session_id: u64, _text: String) -> Result<()> {
+        pub async fn chat(&self, _session_id: u64, _text: String) -> StubResult<()> {
             Err(UNSUPPORTED.into())
         }
-        pub async fn disconnect(&self, _session_id: u64) -> Result<()> {
+        pub async fn disconnect(&self, _session_id: u64) -> StubResult<()> {
             Err(UNSUPPORTED.into())
         }
-        pub async fn send_files(&self, _session_id: u64, _paths: Vec<String>) -> Result<()> {
+        pub async fn send_files(&self, _session_id: u64, _paths: Vec<String>) -> StubResult<()> {
             Err(UNSUPPORTED.into())
         }
-        pub async fn cancel_transfer(&self, _session_id: u64, _id: u64) -> Result<()> {
+        pub async fn cancel_transfer(&self, _session_id: u64, _id: u64) -> StubResult<()> {
             Err(UNSUPPORTED.into())
         }
     }

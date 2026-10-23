@@ -80,40 +80,58 @@ impl TestServer {
             return None;
         };
         let dir = options.dir.unwrap_or_else(temp_dir);
-        let addr: SocketAddr = format!("127.0.0.1:{}", free_udp_port()).parse().unwrap();
-        let child = Command::new(&bin)
-            .arg("run")
-            .env("RC_BIND", addr.to_string())
-            .env("RC_DATA_DIR", &dir)
-            .env("RC_ACCESS_KEY", &options.access_key)
-            .env("RC_ACCOUNTS", &options.accounts)
-            .env("RC_ADMIN_BIND", "off")
-            .env("RUST_LOG", "warn")
-            .stdout(Stdio::null())
-            .stderr(Stdio::null())
-            .spawn()
-            .unwrap_or_else(|e| panic!("cannot start {}: {e}", bin.display()));
-        let mut server = Self {
-            child,
-            bin,
-            addr,
-            dir,
-            fingerprint: [0; 32],
-        };
         let endpoint = rc_transport::client_endpoint("127.0.0.1:0".parse().unwrap()).unwrap();
-        let info = ServerInfo {
-            addr,
-            access_key: options.access_key,
-            pin: None,
-        };
-        for _ in 0..100 {
-            if let Ok(fp) = rc_rendezvous::ping(&endpoint, &info).await {
-                server.fingerprint = fp;
-                return Some(server);
+        // Tests run in parallel: the port picked here can be taken by another
+        // test's server before ours binds it. Then our server exits, and we
+        // try again on another port.
+        for _ in 0..5 {
+            let addr: SocketAddr = format!("127.0.0.1:{}", free_udp_port()).parse().unwrap();
+            let child = Command::new(&bin)
+                .arg("run")
+                .env("RC_BIND", addr.to_string())
+                .env("RC_DATA_DIR", &dir)
+                .env("RC_ACCESS_KEY", &options.access_key)
+                .env("RC_ACCOUNTS", &options.accounts)
+                .env("RC_ADMIN_BIND", "off")
+                .env("RUST_LOG", "warn")
+                .stdout(Stdio::null())
+                .stderr(Stdio::null())
+                .spawn()
+                .unwrap_or_else(|e| panic!("cannot start {}: {e}", bin.display()));
+            let mut server = Self {
+                child,
+                bin: bin.clone(),
+                addr,
+                dir: dir.clone(),
+                fingerprint: [0; 32],
+            };
+            let info = ServerInfo {
+                addr,
+                access_key: options.access_key.clone(),
+                pin: None,
+            };
+            let deadline = std::time::Instant::now() + Duration::from_secs(30);
+            while std::time::Instant::now() < deadline {
+                if !server.running() {
+                    break;
+                }
+                let ping = rc_rendezvous::ping(&endpoint, &info);
+                if let Ok(Ok(fp)) = tokio::time::timeout(Duration::from_secs(2), ping).await {
+                    // Still ours (not another test's server on a reused port)?
+                    if server.running() {
+                        server.fingerprint = fp;
+                        return Some(server);
+                    }
+                    break;
+                }
+                tokio::time::sleep(Duration::from_millis(100)).await;
             }
-            tokio::time::sleep(Duration::from_millis(100)).await;
         }
         panic!("rc-server did not start");
+    }
+
+    fn running(&mut self) -> bool {
+        matches!(self.child.try_wait(), Ok(None))
     }
 
     pub fn info(&self) -> ServerInfo {
