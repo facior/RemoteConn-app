@@ -277,10 +277,11 @@ function HostCard() {
             />
           ))}
           {lastEnded && active.length === 0 && <p className="muted small">Ostatnia sesja: {lastEnded}</p>}
-          {status.service && appVersion && status.version && status.version !== appVersion && (
+          {/* A service from before 0.2.0 does not report its version at all. */}
+          {status.service && appVersion && status.version !== appVersion && (
             <div className="notice">
               <span>
-                Usługa ma starszą wersję ({status.version}) niż aplikacja ({appVersion}).
+                Usługa ma starszą wersję ({status.version || "sprzed 0.2.0"}) niż aplikacja ({appVersion}).
                 {serviceUpdate && <span className="muted small"> {serviceUpdate}</span>}
               </span>
               <button className="secondary" onClick={updateService}>

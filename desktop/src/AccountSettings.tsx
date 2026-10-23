@@ -354,6 +354,14 @@ export function ServiceTab() {
                   Przekaż ustawienia do usługi
                 </button>
                 <button
+                  className="secondary"
+                  disabled={busy}
+                  title="Usługa to osobna kopia programu: po aktualizacji aplikacji zastąp ją nową wersją"
+                  onClick={() => run(api.serviceInstall, "Usługa zaktualizowana do wersji tej aplikacji.")}
+                >
+                  {busy ? "Czekam na zgodę administratora…" : "Zaktualizuj usługę"}
+                </button>
+                <button
                   className="link danger-link"
                   disabled={busy}
                   onClick={() => {
