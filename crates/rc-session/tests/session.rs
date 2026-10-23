@@ -192,8 +192,20 @@ fn test_file(dir: &Path, name: &str, len: usize) -> (PathBuf, Vec<u8>) {
     (path, data)
 }
 
+/// Sessions need a screen to share (hosting on macOS is not implemented yet).
+fn screen_available() -> bool {
+    let available = rc_capture::monitors().is_ok_and(|m| !m.is_empty());
+    if !available {
+        eprintln!("SKIPPED: no screen capture on this machine (hosting needs it)");
+    }
+    available
+}
+
 #[tokio::test]
 async fn correct_password_streams_video() {
+    if !screen_available() {
+        return;
+    }
     let host = start_host("s3cret", true, false).await;
     let (session, mut events, _) = connect(&host, "s3cret").await;
     let session = session.expect("connects");
@@ -254,6 +266,9 @@ async fn user_can_reject() {
 
 #[tokio::test]
 async fn chat_both_ways_and_host_disconnect() {
+    if !screen_available() {
+        return;
+    }
     let mut host = start_host("s3cret", true, false).await;
     let (session, mut events, _) = connect(&host, "s3cret").await;
     let session = session.expect("connects");
@@ -285,6 +300,9 @@ async fn chat_both_ways_and_host_disconnect() {
 
 #[tokio::test]
 async fn file_upload_resumes_and_verifies() {
+    if !screen_available() {
+        return;
+    }
     let mut host = start_host("s3cret", true, true).await;
     let (session, events, _) = connect(&host, "s3cret").await;
     let session = session.expect("connects");
@@ -316,6 +334,9 @@ async fn file_upload_resumes_and_verifies() {
 
 #[tokio::test]
 async fn file_upload_needs_permission() {
+    if !screen_available() {
+        return;
+    }
     let host = start_host("s3cret", true, false).await;
     let (session, events, _) = connect(&host, "s3cret").await;
     let session = session.expect("connects");
@@ -337,6 +358,9 @@ async fn file_upload_needs_permission() {
 
 #[tokio::test]
 async fn host_sends_file_to_viewer() {
+    if !screen_available() {
+        return;
+    }
     let host = start_host("s3cret", true, false).await;
     let (session, events, viewer_downloads) = connect(&host, "s3cret").await;
     let _session = session.expect("connects");
@@ -358,6 +382,9 @@ async fn host_sends_file_to_viewer() {
 
 #[tokio::test]
 async fn quality_preset_changes_bitrate() {
+    if !screen_available() {
+        return;
+    }
     if rc_capture::monitors().unwrap_or_default().is_empty() {
         return;
     }
@@ -387,6 +414,9 @@ async fn quality_preset_changes_bitrate() {
 
 #[tokio::test]
 async fn permanent_password_works_alongside_one_time() {
+    if !screen_available() {
+        return;
+    }
     let host = start_host("jednorazowe", true, false).await;
     // Not set yet: the permanent password is refused.
     let (result, _, _) = connect(&host, "stale-haslo-123").await;

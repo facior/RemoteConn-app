@@ -196,8 +196,20 @@ async fn expect_keyframe(events: &mut mpsc::UnboundedReceiver<ViewerEvent>) {
     assert!(frame.keyframe);
 }
 
+/// Sessions need a screen to share (hosting on macOS is not implemented yet).
+fn screen_available() -> bool {
+    let available = rc_capture::monitors().is_ok_and(|m| !m.is_empty());
+    if !available {
+        eprintln!("SKIPPED: no screen capture on this machine (hosting needs it)");
+    }
+    available
+}
+
 #[tokio::test]
 async fn connects_by_id_directly() {
+    if !screen_available() {
+        return;
+    }
     let Some(server) = start_server().await else {
         return;
     };
@@ -214,6 +226,9 @@ async fn connects_by_id_directly() {
 
 #[tokio::test]
 async fn connects_through_relay() {
+    if !screen_available() {
+        return;
+    }
     let Some(server) = start_server().await else {
         return;
     };
@@ -266,6 +281,9 @@ async fn unknown_and_offline_ids() {
 
 #[tokio::test]
 async fn file_transfer_through_relay() {
+    if !screen_available() {
+        return;
+    }
     let Some(server) = start_server().await else {
         return;
     };
@@ -305,6 +323,9 @@ async fn file_transfer_through_relay() {
 
 #[tokio::test]
 async fn access_key_is_enforced() {
+    if !screen_available() {
+        return;
+    }
     let Some(server) = start_server_with_key("tajny-klucz").await else {
         return;
     };
@@ -344,6 +365,9 @@ async fn access_key_is_enforced() {
 
 #[tokio::test]
 async fn server_pin_is_checked() {
+    if !screen_available() {
+        return;
+    }
     let Some(server) = start_server().await else {
         return;
     };
@@ -442,6 +466,9 @@ fn unix_now() -> i64 {
 
 #[tokio::test]
 async fn account_devices_connect_without_password() {
+    if !screen_available() {
+        return;
+    }
     let Some(server) = TestServer::start(Options {
         accounts: "open".into(),
         ..Default::default()
