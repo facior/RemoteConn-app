@@ -79,6 +79,13 @@ export interface ServerTest {
   newlyPinned: boolean;
 }
 
+/** Server settings read from an administrator's configuration code. */
+export interface ImportedServer {
+  server: string;
+  accessKey: string;
+  fingerprint: string;
+}
+
 export interface AutoAccepted {
   peer: Peer;
   reason: "permanentPassword" | "trustedDevice" | "account";
@@ -235,6 +242,7 @@ export const api = {
   removeTrustedDevice: (fingerprint: string) => invoke<SettingsView>("remove_trusted_device", { fingerprint }),
   testServer: (server: string, accessKey: string) => invoke<ServerTest>("test_server", { server, accessKey }),
   forgetServerPin: (server: string) => invoke<SettingsView>("forget_server_pin", { server }),
+  importConfigCode: (code: string) => invoke<ImportedServer>("import_config_code", { code }),
   autostartEnabled: () => invoke<boolean>("autostart_enabled"),
   hostStart: () => invoke<HostStatus>("host_start"),
   hostStatus: () => invoke<HostStatus | null>("host_status"),

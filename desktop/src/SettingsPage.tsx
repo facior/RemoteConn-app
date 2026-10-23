@@ -94,7 +94,16 @@ export function SettingsPage({ onClose }: { onClose: () => void }) {
           {tab === "general" && <GeneralTab draft={draft} set={set} computerName={view.computerName} />}
           {tab === "security" && <SecurityTab draft={draft} set={set} />}
           {tab === "session" && <SessionTab draft={draft} set={set} defaultDir={view.defaultDownloadDir} />}
-          {tab === "network" && <NetworkTab draft={draft} set={set} />}
+          {tab === "network" && (
+            <NetworkTab
+              draft={draft}
+              set={set}
+              patch={(changes) => {
+                setDraft({ ...draft, ...changes });
+                setMessage(null);
+              }}
+            />
+          )}
           {tab === "account" && <AccountTab serverSet={!!view.settings.rendezvousServer} />}
           {tab === "service" && <ServiceTab />}
         </section>
@@ -371,10 +380,38 @@ function SessionTab({ draft, set, defaultDir }: { draft: Settings; set: SetFn; d
   );
 }
 
-function NetworkTab({ draft, set }: { draft: Settings; set: SetFn }) {
+function NetworkTab({
+  draft,
+  set,
+  patch,
+}: {
+  draft: Settings;
+  set: SetFn;
+  patch: (changes: Partial<Settings>) => void;
+}) {
   const { view, setView } = useSettings();
   const [test, setTest] = useState<{ ok: boolean; text: string } | null>(null);
   const [testing, setTesting] = useState(false);
+  const [codeOpen, setCodeOpen] = useState(false);
+  const [code, setCode] = useState("");
+  const [codeError, setCodeError] = useState("");
+
+  const applyCode = async () => {
+    setCodeError("");
+    try {
+      const imported = await api.importConfigCode(code);
+      patch({ rendezvousServer: imported.server, serverAccessKey: imported.accessKey });
+      setCode("");
+      setCodeOpen(false);
+      setTest({
+        ok: true,
+        text: `Wczytano serwer ${imported.server}, klucz serwera ${imported.fingerprint} jest zaufany. Kliknij „Zapisz”, a potem możesz „Testuj”.`,
+      });
+      setView(await api.getSettings());
+    } catch (e) {
+      setCodeError(String(e));
+    }
+  };
   // The pin shown belongs to the saved server, not to an unsaved edit.
   const savedServer = view?.settings.rendezvousServer ?? "";
   const pinShown = view?.serverFingerprint && savedServer === draft.rendezvousServer.trim();
@@ -406,6 +443,54 @@ function NetworkTab({ draft, set }: { draft: Settings; set: SetFn }) {
   return (
     <>
       <h2>Sieć</h2>
+      <div className="setting group">
+        <div className="row">
+          <span>
+            <strong>Kod konfiguracji serwera</strong>
+            <span className="hint">
+              Kod RC1-… od administratora serwera (panel WWW albo <code>rc-admin app</code>) wpisuje adres, klucz
+              dostępu i zaufany klucz serwera naraz.
+            </span>
+          </span>
+          {!codeOpen && (
+            <button className="secondary" onClick={() => setCodeOpen(true)}>
+              Wklej kod
+            </button>
+          )}
+        </div>
+        {codeOpen && (
+          <>
+            <textarea
+              className="config-code"
+              rows={3}
+              autoFocus
+              spellCheck={false}
+              value={code}
+              placeholder="RC1-…"
+              onChange={(e) => {
+                setCode(e.target.value);
+                setCodeError("");
+              }}
+            />
+            {codeError && <span className="error small">{codeError}</span>}
+            <div className="row">
+              <button className="primary" disabled={!code.trim()} onClick={applyCode}>
+                Wczytaj
+              </button>
+              <button
+                className="link"
+                onClick={() => {
+                  setCodeOpen(false);
+                  setCode("");
+                  setCodeError("");
+                }}
+              >
+                Anuluj
+              </button>
+            </div>
+          </>
+        )}
+      </div>
       <label className="setting">
         Serwer ID (rendezvous i relay)
         <div className="row">

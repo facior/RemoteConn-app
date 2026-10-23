@@ -135,6 +135,7 @@ fn main() {
             settings_cmds::remove_trusted_device,
             settings_cmds::test_server,
             settings_cmds::forget_server_pin,
+            settings_cmds::import_config_code,
             settings_cmds::autostart_enabled,
             host_cmds::host_start,
             host_cmds::host_status,

@@ -6,7 +6,7 @@ use serde::Serialize;
 use tauri::{AppHandle, Emitter, Manager, State};
 use tauri_plugin_autostart::ManagerExt;
 
-use rc_rendezvous::{RendezvousError, ServerInfo};
+use rc_rendezvous::{ConfigCode, RendezvousError, ServerInfo};
 
 use crate::commands::{resolve_server, CmdResult, ACCESS_DENIED_MESSAGE, PIN_MISMATCH_MESSAGE};
 use crate::config::Settings;
@@ -191,6 +191,28 @@ pub async fn test_server(
         latency_ms,
         fingerprint: short_fingerprint(&fingerprint),
         newly_pinned: pin.is_none(),
+    })
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ImportedServer {
+    server: String,
+    access_key: String,
+    fingerprint: String,
+}
+
+/// Reads a configuration code from the server administrator (`RC1-…`) and
+/// trusts the server certificate it names. The server and key are returned
+/// for the settings form; they apply when the user saves it.
+#[tauri::command]
+pub fn import_config_code(state: State<'_, AppState>, code: String) -> CmdResult<ImportedServer> {
+    let parsed = ConfigCode::decode(&code).map_err(|e| format!("Nie można odczytać kodu: {e}."))?;
+    state.pin_server(&parsed.server, &parsed.fingerprint);
+    Ok(ImportedServer {
+        fingerprint: short_fingerprint(&parsed.fingerprint),
+        server: parsed.server,
+        access_key: parsed.access_key,
     })
 }
 

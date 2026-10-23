@@ -43,7 +43,8 @@ komputerom 9-cyfrowe numery ID i pomaga łączyć się przez internet.
   - Ogólne: nazwa urządzenia, motyw, autostart, udostępnianie przy starcie, zamykanie do zasobnika;
   - Bezpieczeństwo: stałe hasło, długość i rotacja hasła jednorazowego, domyślne uprawnienia, zaufane urządzenia;
   - Sesja: domyślna jakość i FPS, folder na pliki, zdalny kursor, dźwięki;
-  - Sieć: serwer ID z testem połączenia, klucz dostępu, przypięty klucz serwera, port, wymuszenie relay;
+  - Sieć: kod konfiguracji od administratora (`RC1-…`, „Wklej kod”: adres, klucz i zaufany klucz serwera naraz),
+    serwer ID z testem połączenia, klucz dostępu, przypięty klucz serwera, port, wymuszenie relay;
   - Konto: logowanie, zakładanie konta z kodem zaproszenia, urządzenia na koncie, zmiana hasła (rozdz. 7);
   - Usługa: instalacja usługi systemowej do dostępu bez nadzoru (rozdz. 6).
 - **Ctrl+Alt+Del** na komputerze zdalnym (przycisk w pasku sesji; działa, gdy tam jest zainstalowana usługa).

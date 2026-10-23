@@ -120,6 +120,17 @@ impl AppState {
         }
     }
 
+    /// Trusts `fingerprint` for `server`, replacing any earlier pin (the
+    /// fingerprint came from the administrator in a configuration code).
+    pub fn pin_server(&self, server: &str, fingerprint: &[u8; 32]) {
+        let mut config = self.config.lock().unwrap();
+        config
+            .current
+            .server_pins
+            .insert(pin_key(server), hex(fingerprint));
+        config.save();
+    }
+
     pub fn forget_server_pin(&self, server: &str) {
         let mut config = self.config.lock().unwrap();
         if config

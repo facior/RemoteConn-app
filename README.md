@@ -55,7 +55,8 @@ wydać aktualizacji dla już zainstalowanych aplikacji**, więc przechowuj kopi�
 
 ## Jak używać
 
-1. **Serwer:** Ustawienia → Sieć → adres serwera ID i klucz dostępu (od administratora), „Testuj”.
+1. **Serwer:** Ustawienia → Sieć → „Wklej kod” i wklej kod konfiguracji `RC1-…` od administratora (z panelu serwera
+   albo `rc-admin app`), potem „Zapisz”. Można też wpisać ręcznie adres serwera ID i klucz dostępu i kliknąć „Testuj”.
 2. **Udostępnianie:** „Zezwól na połączenia”. Pojawią się ID i hasło jednorazowe; przekaż je osobie, która ma się
    połączyć.
 3. **Łączenie:** wpisz ID (albo adres IP) i hasło z komputera zdalnego, „Połącz”. Druga strona akceptuje
