@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Merged by Tauri into the app bundle's Info.plist. -->
+<plist version="1.0">
+<dict>
+  <key>CFBundleURLTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleURLName</key>
+      <string>com.remoteconn.desktop</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>remoteconn</string>
+      </array>
+    </dict>
+  </array>
+</dict>
+</plist>

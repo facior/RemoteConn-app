@@ -1,0 +1,18 @@
+[package]
+name = "rc-input"
+description = "RemoteConn input injection"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+rc-proto.workspace = true
+thiserror.workspace = true
+
+[target.'cfg(windows)'.dependencies]
+rc-capture.workspace = true
+windows = { workspace = true, features = [
+    "Win32_UI_Input_KeyboardAndMouse",
+    "Win32_UI_WindowsAndMessaging",
+] }

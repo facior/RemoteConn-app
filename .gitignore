@@ -1,0 +1,8 @@
+/target/
+node_modules/
+dist/
+*.pdb
+.DS_Store
+.claude/settings.local.json
+# rc-server data from local test runs (contains a private key)
+data/

@@ -1,0 +1,12 @@
+[package]
+name = "rc-codec"
+description = "RemoteConn video encoders"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+openh264.workspace = true
+openh264-sys2 = "0.9"
+thiserror.workspace = true

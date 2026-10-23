@@ -1,0 +1,16 @@
+[package]
+name = "rc-clipboard"
+description = "RemoteConn clipboard synchronization"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+arboard = { version = "3", default-features = false, features = ["image-data"] }
+png = "0.17"
+blake3.workspace = true
+tracing.workspace = true
+
+[target.'cfg(windows)'.dependencies]
+windows = { workspace = true, features = ["Win32_System_DataExchange"] }

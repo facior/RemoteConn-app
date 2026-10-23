@@ -1,0 +1,5 @@
+# LF everywhere, also on Windows checkouts (rustfmt, scripts, tests).
+* text=auto eol=lf
+*.png binary
+*.ico binary
+*.icns binary

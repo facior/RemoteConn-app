@@ -1,0 +1,26 @@
+[package]
+name = "rc-session"
+description = "RemoteConn host and viewer session logic"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+rc-proto.workspace = true
+rc-crypto.workspace = true
+rc-transport.workspace = true
+rc-capture.workspace = true
+rc-codec.workspace = true
+rc-input.workspace = true
+rc-rendezvous.workspace = true
+rc-clipboard.workspace = true
+tokio = { workspace = true, features = ["fs", "io-util"] }
+blake3.workspace = true
+dirs = "5"
+tracing.workspace = true
+thiserror.workspace = true
+rand.workspace = true
+
+[dev-dependencies]
+blake3.workspace = true
